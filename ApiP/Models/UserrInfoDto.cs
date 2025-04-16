@@ -11,9 +11,9 @@ namespace ApiP.Models
 {
     public class UserInfoDto
     {
-        public string Imie { get; set; }
-        public string Nazwisko { get; set; }
-        public int Nr_Sluzbowy { get; set; }
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public int BadgeNumber { get; set; }
         public string Email { get; set; }
 
     }

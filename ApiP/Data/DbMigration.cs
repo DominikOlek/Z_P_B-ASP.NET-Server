@@ -31,9 +31,9 @@ namespace ApiP
                 {
                     dbContext.Database.Migrate();
                 }
-                if (!dbContext.TaryfikatorBd.Any()) {
+                if (!dbContext.TaryfikatBd.Any()) {
                     var taryfikaty = GetTar();
-                    dbContext.TaryfikatorBd.AddRange(taryfikaty);
+                    dbContext.TaryfikatBd.AddRange(taryfikaty);
                 }
                 if (!dbContext.RolesBd.Any())
                 {
@@ -51,7 +51,8 @@ namespace ApiP
         }
         public IEnumerable<Taryfikator> GetTar()
         {
-            string TaryfFile = File.ReadAllText(@"D:\Nowy folder\ApiP\JSON\Taryfikaty.json");
+            //string TaryfFile = File.ReadAllText(@"D:\Nowy folder\ApiP\JSON\Taryfikaty.json");
+            string TaryfFile = File.ReadAllText(@"..\JSON\Taryfikaty.json");
             IEnumerable<Taryfikator> rol = null;
             try
             {
@@ -70,14 +71,14 @@ namespace ApiP
         {
             IEnumerable<Users> use = new Users[] {
                 new Users(){
-                    RolaID=7,
-                    Imie="Admin",
-                    Nazwisko="Admin",
-                    Nr_Sluzbowy=10,
+                    RoleID=7,
+                    Name="Admin",
+                    LastName="Admin",
+                    BadgeNumber=10,
                     Email="adminstrony@gmail.com",
                     Pesel="12345678109",
                     PasswordHash="",
-                    Aktywny = true
+                    IsActive = true
                 }
             };
             var Password = _hasher.HashPassword(use.First(), "zaq1qwerty");
@@ -86,16 +87,16 @@ namespace ApiP
            
         }
 
-        public IEnumerable<Role> GetRoles() {
-            IEnumerable<Role> rol= new Role[] { 
-                new Role(){ 
-                    Nazwa_Roli="Ruch_Drogowy",
+        public IEnumerable<Roles> GetRoles() {
+            IEnumerable<Roles> rol= new Roles[] { 
+                new Roles(){ 
+                    RoleName="Ruch_Drogowy",
                 },
-                new Role(){
-                    Nazwa_Roli="Komendant",
+                new Roles(){
+                    RoleName="Komendant",
                 },
-                new Role(){
-                    Nazwa_Roli="Administrator",
+                new Roles(){
+                    RoleName="Administrator",
                 }
             };
             return rol;

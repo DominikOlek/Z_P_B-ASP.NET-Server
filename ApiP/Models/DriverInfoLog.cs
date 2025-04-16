@@ -15,9 +15,9 @@ namespace ApiP.Models
         [StringLength(11, MinimumLength = 11)]
         public string Pesel { get; set; }
         [Required]
-        public string Imie { get; set; }
+        public string Name { get; set; }
         [Required]
-        public string Nazwisko { get; set; }
+        public string LastName { get; set; }
 
     }
 }

@@ -26,18 +26,18 @@ namespace ApiP.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Data_ur")
+                    b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Imie")
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("Nazwisko")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -68,83 +68,33 @@ namespace ApiP.Migrations
                     b.ToTable("AppUsersBd");
                 });
 
-            modelBuilder.Entity("ApiP.Data.CzasowoOdebrane", b =>
+            modelBuilder.Entity("ApiP.Data.Drivers", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("DataOddania")
+                    b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DataOdebrania")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataWystawienia")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("KierowcaID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("KierowcaID");
-
-                    b.ToTable("CzasowoBd");
-                });
-
-            modelBuilder.Entity("ApiP.Data.Historia", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Imie")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nazwisko")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Opis")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PESEL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("HistBd");
-                });
-
-            modelBuilder.Entity("ApiP.Data.Kierowcy", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("CzyOdebrano")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CzyUtracil")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("Data_orzymania")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Data_ur")
+                    b.Property<DateTime>("DateOfPassLicense")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Imie")
+                    b.Property<bool>("IsPermanentLost")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTimelyLost")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Nazwisko")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -161,56 +111,41 @@ namespace ApiP.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("KierowcyBd");
+                    b.ToTable("DriversBd");
                 });
 
-            modelBuilder.Entity("ApiP.Data.Mandaty", b =>
+            modelBuilder.Entity("ApiP.Data.History", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("DataOplacenia")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataWydania")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("KierowcyID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Kwota")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Opis")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PowodID")
-                        .HasColumnType("int");
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PrzezID")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PESEL")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("KierowcyID");
-
-                    b.HasIndex("PowodID");
-
-                    b.HasIndex("PrzezID");
-
-                    b.ToTable("MandatyBd");
+                    b.ToTable("HistBd");
                 });
 
-            modelBuilder.Entity("ApiP.Data.Role", b =>
+            modelBuilder.Entity("ApiP.Data.Roles", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Nazwa_Roli")
+                    b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -226,18 +161,83 @@ namespace ApiP.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Liczba_PKT")
+                    b.Property<int>("MonthsOfLost")
                         .HasColumnType("int");
 
-                    b.Property<int>("MiesiąceWstrzymania")
+                    b.Property<int>("PointNumber")
                         .HasColumnType("int");
 
-                    b.Property<string>("Tytul")
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("TaryfikatorBd");
+                    b.ToTable("TaryfikatBd");
+                });
+
+            modelBuilder.Entity("ApiP.Data.Tickets", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CopID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Cost")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateOfPayment")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfTicket")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DriverID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReasonID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CopID");
+
+                    b.HasIndex("DriverID");
+
+                    b.HasIndex("ReasonID");
+
+                    b.ToTable("TicketsBd");
+                });
+
+            modelBuilder.Entity("ApiP.Data.TimelyLost", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateOfGiveBack")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfLost")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfTicket")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DriverID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("DriverID");
+
+                    b.ToTable("TimelyBd");
                 });
 
             modelBuilder.Entity("ApiP.Data.Users", b =>
@@ -247,27 +247,27 @@ namespace ApiP.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Aktywny")
-                        .HasColumnType("bit");
+                    b.Property<int>("BadgeNumber")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Data_ur")
+                    b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Imie")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("Nazwisko")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("Nr_Sluzbowy")
-                        .HasColumnType("int");
 
                     b.Property<string>("Nr_tel")
                         .HasColumnType("nvarchar(max)");
@@ -281,68 +281,68 @@ namespace ApiP.Migrations
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
 
-                    b.Property<int>("RolaID")
+                    b.Property<int>("RoleID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("RolaID");
+                    b.HasIndex("RoleID");
 
                     b.ToTable("UsersBd");
                 });
 
-            modelBuilder.Entity("ApiP.Data.CzasowoOdebrane", b =>
+            modelBuilder.Entity("ApiP.Data.Tickets", b =>
                 {
-                    b.HasOne("ApiP.Data.Kierowcy", "Kierowca")
+                    b.HasOne("ApiP.Data.Users", "Cop")
                         .WithMany()
-                        .HasForeignKey("KierowcaID")
+                        .HasForeignKey("CopID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Kierowca");
+                    b.HasOne("ApiP.Data.Drivers", "Driver")
+                        .WithMany("Tickets")
+                        .HasForeignKey("DriverID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApiP.Data.Taryfikator", "Reason")
+                        .WithMany()
+                        .HasForeignKey("ReasonID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cop");
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Reason");
                 });
 
-            modelBuilder.Entity("ApiP.Data.Mandaty", b =>
+            modelBuilder.Entity("ApiP.Data.TimelyLost", b =>
                 {
-                    b.HasOne("ApiP.Data.Kierowcy", "Kierowcy")
-                        .WithMany("Mandaty")
-                        .HasForeignKey("KierowcyID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApiP.Data.Taryfikator", "Powod")
+                    b.HasOne("ApiP.Data.Drivers", "Driver")
                         .WithMany()
-                        .HasForeignKey("PowodID")
+                        .HasForeignKey("DriverID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApiP.Data.Users", "Przez")
-                        .WithMany()
-                        .HasForeignKey("PrzezID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Kierowcy");
-
-                    b.Navigation("Powod");
-
-                    b.Navigation("Przez");
+                    b.Navigation("Driver");
                 });
 
             modelBuilder.Entity("ApiP.Data.Users", b =>
                 {
-                    b.HasOne("ApiP.Data.Role", "Rola")
+                    b.HasOne("ApiP.Data.Roles", "Role")
                         .WithMany()
-                        .HasForeignKey("RolaID")
+                        .HasForeignKey("RoleID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Rola");
+                    b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("ApiP.Data.Kierowcy", b =>
+            modelBuilder.Entity("ApiP.Data.Drivers", b =>
                 {
-                    b.Navigation("Mandaty");
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

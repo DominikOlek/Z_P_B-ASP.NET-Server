@@ -12,33 +12,33 @@ namespace ApiP.Data
         private string _connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ApiP;Trusted_Connection=True;";
 
         public DbSet<Users> UsersBd { get; set; }
-        public DbSet<Role> RolesBd { get; set; }
-        public DbSet<Kierowcy> KierowcyBd { get; set; }
-        public DbSet<Mandaty> MandatyBd { get; set; }
-        public DbSet<Taryfikator> TaryfikatorBd { get; set; }
-        public DbSet<Historia> HistBd { get; set; }
-        public DbSet<CzasowoOdebrane> CzasowoBd { get; set; }
+        public DbSet<Roles> RolesBd { get; set; }
+        public DbSet<Drivers> DriversBd { get; set; }
+        public DbSet<Tickets> TicketsBd { get; set; }
+        public DbSet<Taryfikator> TaryfikatBd { get; set; }
+        public DbSet<History> HistBd { get; set; }
+        public DbSet<TimelyLost> TimelyBd { get; set; }
         public DbSet<AppUsers> AppUsersBd { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Users>().Property(u => u.Nr_Sluzbowy).IsRequired();
-            modelBuilder.Entity<Users>().Property(u => u.Imie).IsRequired().HasMaxLength(20);
-            modelBuilder.Entity<Users>().Property(u => u.Nazwisko).IsRequired().HasMaxLength(20);
+            modelBuilder.Entity<Users>().Property(u => u.BadgeNumber).IsRequired();
+            modelBuilder.Entity<Users>().Property(u => u.Name).IsRequired().HasMaxLength(20);
+            modelBuilder.Entity<Users>().Property(u => u.LastName).IsRequired().HasMaxLength(20);
             modelBuilder.Entity<Users>().Property(u => u.Pesel).IsRequired().HasMaxLength(11);
             modelBuilder.Entity<Users>().Property(u => u.PasswordHash).IsRequired();
-            modelBuilder.Entity<Role>().Property(u => u.Nazwa_Roli).IsRequired();
+            modelBuilder.Entity<Roles>().Property(u => u.RoleName).IsRequired();
 
-            modelBuilder.Entity<Kierowcy>().Property(u => u.Pesel).IsRequired().HasMaxLength(11);
-            modelBuilder.Entity<Kierowcy>().Property(u => u.Imie).IsRequired();
-            modelBuilder.Entity<Kierowcy>().Property(u => u.Nazwisko).IsRequired();
-            modelBuilder.Entity<Mandaty>().Property(u => u.PowodID).IsRequired();
-            modelBuilder.Entity<Mandaty>().Property(u => u.DataWydania).IsRequired();
-            modelBuilder.Entity<Taryfikator>().Property(u => u.Liczba_PKT).IsRequired();
-            modelBuilder.Entity<CzasowoOdebrane>().Property(u => u.KierowcaID).IsRequired();
+            modelBuilder.Entity<Drivers>().Property(u => u.Pesel).IsRequired().HasMaxLength(11);
+            modelBuilder.Entity<Drivers>().Property(u => u.Name).IsRequired();
+            modelBuilder.Entity<Drivers>().Property(u => u.LastName).IsRequired();
+            modelBuilder.Entity<Tickets>().Property(u => u.ReasonID).IsRequired();
+            modelBuilder.Entity<Tickets>().Property(u => u.DateOfTicket).IsRequired();
+            modelBuilder.Entity<Taryfikator>().Property(u => u.PointNumber).IsRequired();
+            modelBuilder.Entity<TimelyLost>().Property(u => u.DriverID).IsRequired();
 
-            modelBuilder.Entity<AppUsers>().Property(u => u.Imie).IsRequired().HasMaxLength(20);
-            modelBuilder.Entity<AppUsers>().Property(u => u.Nazwisko).IsRequired().HasMaxLength(20);
+            modelBuilder.Entity<AppUsers>().Property(u => u.Name).IsRequired().HasMaxLength(20);
+            modelBuilder.Entity<AppUsers>().Property(u => u.LastName).IsRequired().HasMaxLength(20);
             modelBuilder.Entity<AppUsers>().Property(u => u.Pesel).IsRequired().HasMaxLength(11);
             modelBuilder.Entity<AppUsers>().Property(u => u.PasswordHash).IsRequired();
         }

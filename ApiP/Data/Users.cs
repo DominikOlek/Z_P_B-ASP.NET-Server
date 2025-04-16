@@ -12,17 +12,17 @@ namespace ApiP.Data{
     public class Users
     {
         public int ID { get; set; }
-        public int Nr_Sluzbowy { get; set; }
-        public string Imie { get; set; }
-        public string Nazwisko { get; set; }
+        public int BadgeNumber { get; set; }
+        public string Name { get; set; }
+        public string LastName { get; set; }
         public string PasswordHash { get; set; }
         public string Email { get; set; }
         public string Nr_tel { get; set; }
-        public DateTime Data_ur { get; set; }
+        public DateTime BirthDate { get; set; }
         public string Pesel { get; set; }
-        public bool Aktywny { get; set; } = false;
-        public int RolaID { get; set; } = 7;
-        public virtual Role Rola { get; set; }
+        public bool IsActive { get; set; } = false;
+        public int RoleID { get; set; } = 3;
+        public virtual Roles Role { get; set; }
     }
 }
 

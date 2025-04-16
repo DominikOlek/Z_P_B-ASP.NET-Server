@@ -43,7 +43,7 @@ namespace ApiP.Controllers
         }
 
         [HttpGet("GetRoles")]
-        public ActionResult<Role> GetRoles() {
+        public ActionResult<Roles> GetRoles() {
             return Ok(_Service.GetRoles());
         }
 
@@ -63,7 +63,7 @@ namespace ApiP.Controllers
         [HttpPost("ModifyTaryfikat")]
         public ActionResult MOdTar([FromBody] AddTaryfikatorDto tar,[FromQuery] int id)
         {
-            _Service.MOdtar(tar,id);
+            _Service.EditTar(tar,id);
             return Ok();
         }
 

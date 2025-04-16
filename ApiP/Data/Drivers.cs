@@ -8,21 +8,21 @@ using ApiP.Services;
 
 namespace ApiP.Data
 {
-    public class Kierowcy
+    public class Drivers
     {
         public int ID { get; set; }
-        public string Imie { get; set; }
-        public string Nazwisko { get; set; }
+        public string Name { get; set; }
+        public string LastName { get; set; }
        // public string ActivationCodeHash { get; set; }
         public string Email { get; set; }
         public string Nr_tel { get; set; }
-        public DateTime Data_ur { get; set; }
-        public DateTime Data_orzymania { get; set; }
+        public DateTime BirthDate { get; set; }
+        public DateTime DateOfPassLicense { get; set; }
         public string Pesel { get; set; }
-        public bool CzyOdebrano { get; set; }
-        public bool CzyUtracil { get; set; }
+        public bool IsTimelyLost { get; set; }
+        public bool IsPermanentLost { get; set; }
         public int Pkt { get; set; }
-        public virtual List<Mandaty> Mandaty { get; set; }
+        public virtual List<Tickets> Tickets { get; set; }
 
     }
 }

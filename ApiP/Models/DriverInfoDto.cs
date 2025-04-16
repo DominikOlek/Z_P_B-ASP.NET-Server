@@ -11,7 +11,7 @@ namespace ApiP.Models
 {
     public class DriverInfoDto
     {
-        public ReturnMandatDto[] Mandats { get; set; }
+        public ReturnTicketDto[] Tickets { get; set; }
         public string[] History { get; set; }
         public string ImportantInfo { get; set; } = " ";
     }

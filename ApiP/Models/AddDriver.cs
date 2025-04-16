@@ -9,28 +9,26 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ApiP.Models
 {
-    public class AddMandatDto
+    public class AddDriverDto
     {
+        public int ID { get; set; }
         [Required]
-        [MaxLength(11)]
-        [MinLength(11)]
-        public string Pesel { get; set; }
+        [MaxLength(15)]
+        public string Name { get; set; }
         [Required]
-        public string Imie { get; set; }
-        [Required]
-        public string Nazwisko { get; set; }
+        [MaxLength(20)]
+        public string LastName { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
         [Required]
+        [StringLength(9)]
         public string Nr_tel { get; set; }
         [Required]
-        public DateTime Data_ur { get; set; }
-        public DateTime Data_orzymania { get; set; }
+        public DateTime BirthDate { get; set; }
         [Required]
-        public int IDPowodu { get; set; }
-        [MaxLength(255)]
-        public string OpisPowodu { get; set; }
+        [StringLength(11)]
+        public string Pesel { get; set; }
 
     }
 }

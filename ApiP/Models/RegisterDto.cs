@@ -12,21 +12,21 @@ namespace ApiP.Models
     public class RegisterDto
     {
         [Required]
-        public int Nr_Sluzbowy { get; set; }
+        public int BadgeNumber { get; set; }
         [Required]
         [StringLength(11, MinimumLength = 11)]
         public string Pesel { get; set; }
         [Required]
-        public string Imie { get; set; }
+        public string Name { get; set; }
         [Required]
-        public string Nazwisko { get; set; }  
+        public string LastName { get; set; }  
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
         public string Nr_tel { get; set; }
-        public DateTime Data_ur { get; set; }
+        public DateTime BirthDate { get; set; }
 
     }
 }

@@ -12,19 +12,19 @@ namespace ApiP.Models
     public class ReturnBigMandatDto
     {
         public int ID { get; set; }
-        public string Tytul { get; set; }
-        public string Opis { get; set; }
-        public int PktZaMandat { get; set; }
-        public DateTime DataWydania { get; set; }
-        public bool oplata { get; set; }
-        public int kwota { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int PointsNumber { get; set; }
+        public DateTime DateOfTicket { get; set; }
+        public bool isCost { get; set; }
+        public int Cost { get; set; }
 
-        public string ImieKaranego { get; set; }
-        public string NazwiskoKaranego { get; set; }
+        public string NameOfRecipient { get; set; }
+        public string LastNameOfRecipient { get; set; }
 
-        public string ImieKarającego { get; set; }
-        public string NazwiskoKarającego { get; set; }
-        public string Nr_Karającego { get; set; }
+        public string NameOfCop { get; set; }
+        public string LastNameOfCop { get; set; }
+        public string BadgeNumberOfCop { get; set; }
     }
 }
 

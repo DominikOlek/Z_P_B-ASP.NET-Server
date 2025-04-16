@@ -8,13 +8,13 @@ using ApiP.Services;
 
 namespace ApiP.Data
 {
-    public class Historia
+    public class History
     {
         public int ID { get; set; }
         public string PESEL { get; set; }
-        public string Imie { get; set; }
-        public string Nazwisko { get; set; }
-        public string Opis { get; set; }
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public string Description { get; set; }
 
     }
 }

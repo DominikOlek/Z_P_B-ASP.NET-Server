@@ -8,10 +8,10 @@ using ApiP.Services;
 
 namespace ApiP.Data
 {
-    public class Role
+    public class Roles
     {
         public int ID { get; set; }
-        public string Nazwa_Roli { get; set; }
+        public string RoleName { get; set; }
     }
 }
 

@@ -9,26 +9,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ApiP.Models
 {
-    public class AddKierowcaDto
+    public class AddTicketDto
     {
-        public int ID { get; set; }
         [Required]
-        [MaxLength(15)]
-        public string Imie { get; set; }
+        [MaxLength(11)]
+        [MinLength(11)]
+        public string Pesel { get; set; }
         [Required]
-        [MaxLength(20)]
-        public string Nazwisko { get; set; }
+        public string Name { get; set; }
+        [Required]
+        public string LastName { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [StringLength(9)]
         public string Nr_tel { get; set; }
         [Required]
-        public DateTime Data_ur { get; set; }
+        public DateTime BirthDate { get; set; }
+        public DateTime DateOfTicket { get; set; }
         [Required]
-        [StringLength(11)]
-        public string Pesel { get; set; }
+        public int ReasonID { get; set; }
+        [MaxLength(255)]
+        public string Description { get; set; }
 
     }
 }

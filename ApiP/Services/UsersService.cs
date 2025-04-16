@@ -51,7 +51,7 @@ namespace ApiP.Services
         }
 
         public void Register(RegisterDto dto) {
-            if (_dbContext.UsersBd.FirstOrDefault(a => a.Nr_Sluzbowy == dto.Nr_Sluzbowy || a.Pesel == dto.Pesel) == null)
+            if (_dbContext.UsersBd.FirstOrDefault(a => a.BadgeNumber == dto.BadgeNumber || a.Pesel == dto.Pesel) == null)
             {
                 if (dto.Password == dto.ConfirmPassword)
                 {
@@ -71,7 +71,7 @@ namespace ApiP.Services
         }
 
         public string GenerateJwt(LoginDto dto) {
-            var user = _dbContext.UsersBd.Include(a=>a.Rola).FirstOrDefault(a => a.Nr_Sluzbowy == dto.Nr_Sluzbowy && a.Aktywny && a.Email == dto.Email);
+            var user = _dbContext.UsersBd.Include(a=>a.Role).FirstOrDefault(a => a.BadgeNumber == dto.BadgeNumber && a.IsActive && a.Email == dto.Email);
             if (user == null)
                 throw new ApiP.Exceptions.OverflowException("Błędne dane logowania lub to konto jest nieaktywne");
             var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
@@ -80,9 +80,9 @@ namespace ApiP.Services
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier,user.ID.ToString()),
-                new Claim(ClaimTypes.Name,$"{user.Imie + user.Nazwisko }"),
+                new Claim(ClaimTypes.Name,$"{user.Name + user.LastName }"),
                 new Claim(ClaimTypes.Email,user.Email),
-                new Claim(ClaimTypes.Role,user.Rola.Nazwa_Roli),
+                new Claim(ClaimTypes.Role,user.Role.RoleName),
             };
             return CodeJwt(claims);
         }
@@ -122,20 +122,20 @@ namespace ApiP.Services
         }
 
         public DriverInfoDto GetDriverInfo(DriverInfoLog dto) {
-            var driver =_dbContext.KierowcyBd.FirstOrDefault(a => a.Pesel == dto.Pesel && a.Imie == dto.Imie && a.Nazwisko == dto.Nazwisko);
-            var driverHist = _dbContext.HistBd.FirstOrDefault(a=>a.PESEL == dto.Pesel && a.Imie == dto.Imie && a.Nazwisko == dto.Nazwisko);
+            var driver =_dbContext.DriversBd.FirstOrDefault(a => a.Pesel == dto.Pesel && a.Name == dto.Name && a.LastName == dto.LastName);
+            var driverHist = _dbContext.HistBd.FirstOrDefault(a=>a.PESEL == dto.Pesel && a.Name == dto.Name && a.LastName == dto.LastName);
             DriverInfoDto Info = new DriverInfoDto();
             if (driver == null && driverHist == null)
-                throw new NotFoundExceptions("Kierowca nie posiada wpisów");
-            else if (driver.CzyUtracil)
+                throw new NotFoundExceptions("Driver nie posiada wpisów");
+            else if (driver.IsPermanentLost)
             {
                 Info.ImportantInfo = "KIEROWCA OBECNIE NIE POSIADA UPRAWNIEŃ DO PROWADZENIA POJAZDÓW";
                 Info.History = _mService.History(dto.Pesel).Split('|');
             }
             else {
-                if (_dbContext.CzasowoBd.Include(a => a.Kierowca).FirstOrDefault(a => a.Kierowca == driver) != null)
+                if (_dbContext.TimelyBd.Include(a => a.Driver).FirstOrDefault(a => a.Driver == driver) != null)
                     Info.ImportantInfo = "OBECNIE KIEROWCA MA WSTRZYMANE UPRAWNIENIA DO PROWADZENIA POJAZDÓW";
-                Info.Mandats = _mService.MandatyKierowcy(dto.Pesel);
+                Info.Tickets = _mService.DriverTickets(dto.Pesel);
                 Info.History = _mService.History(dto.Pesel).Split('|');
             }
             Info.ImportantInfo = Info.ImportantInfo.Insert(0, $"Obecna liczba punktów karnych:{driver.Pkt} ");

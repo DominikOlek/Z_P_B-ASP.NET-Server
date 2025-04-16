@@ -19,10 +19,10 @@ namespace ApiP.Services {
     public interface IMainService
     {
         string Test(int liczba);
-        string[] DodanieMandatu(AddMandatDto mandatDto, int IDWystaw);
-        public ReturnKierowcaDto InformacjeKierowcy(string PESEL);
-        public void Oplacanie(string id);
-        public ReturnMandatDto[] MandatyKierowcy(string PESEL);
+        string[] AddTicketF(AddTicketDto mandatDto, int IDWystaw);
+        public ReturnDriverDto DriverInfoF(string PESEL);
+        public void PaymentF(string id);
+        public ReturnTicketDto[] DriverTickets(string PESEL);
         public string History(string PESEL);
         List<Taryfikator> GetTar();
     }
@@ -43,55 +43,55 @@ namespace ApiP.Services {
             return "Wszystko spoko" + liczba;
         }
 
-        public string[] DodanieMandatu(AddMandatDto mandatDto,int IDWystaw) {
-            var tenkierowca =_dbContext.KierowcyBd.FirstOrDefault(a => a.Pesel == mandatDto.Pesel);
+        public string[] AddTicketF(AddTicketDto mandatDto,int IDWystaw) {
+            var tenkierowca =_dbContext.DriversBd.FirstOrDefault(a => a.Pesel == mandatDto.Pesel);
             if (tenkierowca == null)
                 DodanieKierowcy(mandatDto);
-            else if ((tenkierowca == null && _dbContext.HistBd.FirstOrDefault(a => a.PESEL == mandatDto.Pesel) != null) || tenkierowca.CzyOdebrano || tenkierowca.CzyUtracil)
+            else if ((tenkierowca == null && _dbContext.HistBd.FirstOrDefault(a => a.PESEL == mandatDto.Pesel) != null) || tenkierowca.IsTimelyLost || tenkierowca.IsPermanentLost)
                 return new string[] { "", "TEN KIEROWCA NIE POSIADA UPRAWNIEÑ DO PROWADZENIA POJAZDAMI" };
-            tenkierowca = _dbContext.KierowcyBd.FirstOrDefault(a => a.Pesel == mandatDto.Pesel);
-            var Mandat = _mapp.Map<Mandaty>(mandatDto);
-            Mandat.KierowcyID = tenkierowca.ID;
-            Mandat.DataWydania = DateTime.Today;
-            Mandat.PrzezID = IDWystaw;
-            _dbContext.MandatyBd.Add(Mandat);
+            tenkierowca = _dbContext.DriversBd.FirstOrDefault(a => a.Pesel == mandatDto.Pesel);
+            var Mandat = _mapp.Map<Tickets>(mandatDto);
+            Mandat.DriverID = tenkierowca.ID;
+            Mandat.DateOfTicket = DateTime.Today;
+            Mandat.CopID = IDWystaw;
+            _dbContext.TicketsBd.Add(Mandat);
 
-            var taryfikatMandatu = _dbContext.TaryfikatorBd.FirstOrDefault(a => a.ID == Mandat.PowodID);
-            tenkierowca.Pkt += taryfikatMandatu.Liczba_PKT;
+            var taryfikatMandatu = _dbContext.TaryfikatBd.FirstOrDefault(a => a.ID == Mandat.ReasonID);
+            tenkierowca.Pkt += taryfikatMandatu.PointNumber;
             string TytylMail = "OTRZYMA£EŒ MANDAT";
-            string Tekst = $"Kierowca { string.Join(' ', tenkierowca.Imie, tenkierowca.Nazwisko)} Otrzyma³ mandat za: {taryfikatMandatu.Tytul}. Opis zdarzenia: {Mandat.Opis}. Pamiêtaj o uragulowaniu p³atnoœci. Obecna liczba punktów karnych: {tenkierowca.Pkt}";
+            string Tekst = $"Driver { string.Join(' ', tenkierowca.Name, tenkierowca.LastName)} Otrzyma³ mandat za: {taryfikatMandatu.Title}. Description zdarzenia: {Mandat.Description}. Pamiêtaj o uragulowaniu p³atnoœci. Obecna liczba punktów karnych: {tenkierowca.Pkt}";
             Send("romaine.gorczany23@ethereal.email", Tekst, TytylMail);
-            if (((DateTime.Today - tenkierowca.Data_orzymania).TotalDays / 365 < 1 && tenkierowca.Pkt >= 20) || tenkierowca.Pkt >= 24)
+            if (((DateTime.Today - tenkierowca.DateOfPassLicense).TotalDays / 365 < 1 && tenkierowca.Pkt >= 20) || tenkierowca.Pkt >= 24)
             {
                 //odebranie
-                var MandatyKier =_dbContext.MandatyBd.Include(u=>u.Powod).Where(a => a.KierowcyID == tenkierowca.ID && DateTime.Compare(a.DataOplacenia , a.DataWydania)==1).OrderByDescending(b=>b.DataWydania);
-                DodanieWpisuHistorii("Kierowca straci³ uprawnienia do kierowania pojazdami| ", tenkierowca);
-                foreach (Mandaty i in MandatyKier) {
-                    DodanieWpisuHistorii("Kierowca otrzyma³ mandat za "+i.Powod.Tytul+"| " , tenkierowca);
+                var MandatyKier =_dbContext.TicketsBd.Include(u=>u.Reason).Where(a => a.DriverID == tenkierowca.ID && DateTime.Compare(a.DateOfPayment , a.DateOfTicket)==1).OrderByDescending(b=>b.DateOfTicket);
+                DodanieWpisuHistorii("Driver straci³ uprawnienia do kierowania pojazdami| ", tenkierowca);
+                foreach (Tickets i in MandatyKier) {
+                    DodanieWpisuHistorii("Driver otrzyma³ mandat za "+i.Reason.Title+"| " , tenkierowca);
                 }
-                tenkierowca.CzyUtracil = true;
-                _dbContext.MandatyBd.RemoveRange(MandatyKier);
+                tenkierowca.IsPermanentLost = true;
+                _dbContext.TicketsBd.RemoveRange(MandatyKier);
                 _dbContext.SaveChanges();
                 TytylMail = "UTRACENIE PRAWA JAZDY";
-                Tekst = "Kierowca " + string.Join(' ', tenkierowca.Imie, tenkierowca.Nazwisko) + " utraci³ prawo jazdy za zbyt du¿¹ liczbê punktów " + tenkierowca.Pkt+". Aby odzyskaæ uprawnienia musisz ponowanie zdaæ egzaminy";
+                Tekst = "Driver " + string.Join(' ', tenkierowca.Name, tenkierowca.LastName) + " utraci³ prawo jazdy za zbyt du¿¹ liczbê punktów " + tenkierowca.Pkt+". Aby odzyskaæ uprawnienia musisz ponowanie zdaæ egzaminy";
                 Send("romaine.gorczany23@ethereal.email", Tekst, TytylMail);
                 return new string[] { Mandat.ID+"",Tekst };
             }
-            if (Mandat.Powod.Miesi¹ceWstrzymania > 0) {
-                tenkierowca.CzyOdebrano = true;
-                var czasBd = _dbContext.CzasowoBd.FirstOrDefault(a => a.KierowcaID == tenkierowca.ID);
+            if (Mandat.Reason.MonthsOfLost > 0) {
+                tenkierowca.IsTimelyLost = true;
+                var czasBd = _dbContext.TimelyBd.FirstOrDefault(a => a.DriverID == tenkierowca.ID);
                 if (czasBd != null)
                 {
-                    czasBd.DataOddania.AddMonths(Mandat.Powod.Miesi¹ceWstrzymania);
-                    DodanieWpisuHistorii("Kierowca otrzyma³ przed³u¿enie utraty prawa jazdy do dnia " +czasBd.DataOddania.Date , tenkierowca);
-                    Tekst = "Kierowca " + string.Join(' ', tenkierowca.Imie, tenkierowca.Nazwisko) + " otrzyma³ przed³u¿enie utraty prawa jazdy do dnia " + czasBd.DataOddania.Date + " z powodu " + Mandat.Powod.Tytul;
+                    czasBd.DateOfGiveBack.AddMonths(Mandat.Reason.MonthsOfLost);
+                    DodanieWpisuHistorii("Driver otrzyma³ przed³u¿enie utraty prawa jazdy do dnia " +czasBd.DateOfGiveBack.Date , tenkierowca);
+                    Tekst = "Driver " + string.Join(' ', tenkierowca.Name, tenkierowca.LastName) + " otrzyma³ przed³u¿enie utraty prawa jazdy do dnia " + czasBd.DateOfGiveBack.Date + " z powodu " + Mandat.Reason.Title;
                 }
                 else
                 {
-                    var czas = new CzasowoOdebrane { KierowcaID = tenkierowca.ID, DataWystawienia = DateTime.Today };
-                    _dbContext.CzasowoBd.Add(czas);
-                    DodanieWpisuHistorii("Kierowca straci³ uprawnienia do kierowania pojazdami na okres" + Mandat.Powod.Miesi¹ceWstrzymania + "| ", tenkierowca);
-                    Tekst = "Kierowca " + string.Join(' ', tenkierowca.Imie, tenkierowca.Nazwisko) + " utraci³ prawo jazdy na okres " + Mandat.Powod.Miesi¹ceWstrzymania + " miesiêcy za " + Mandat.Powod.Tytul;
+                    var czas = new TimelyLost { DriverID = tenkierowca.ID, DateOfTicket = DateTime.Today };
+                    _dbContext.TimelyBd.Add(czas);
+                    DodanieWpisuHistorii("Driver straci³ uprawnienia do kierowania pojazdami na okres" + Mandat.Reason.MonthsOfLost + "| ", tenkierowca);
+                    Tekst = "Driver " + string.Join(' ', tenkierowca.Name, tenkierowca.LastName) + " utraci³ prawo jazdy na okres " + Mandat.Reason.MonthsOfLost + " miesiêcy za " + Mandat.Reason.Title;
                 }
                 _dbContext.SaveChanges();               
                 TytylMail = "UTRACENIE PRAWA JAZDY";
@@ -107,52 +107,52 @@ namespace ApiP.Services {
         {
             await _emailSender.SendEmailAsync(toAddress, title, body);
         }
-        public void DodanieKierowcy(AddMandatDto mandatDto) {
-            var Kierowca =_mapp.Map<Kierowcy>(mandatDto);
-            _dbContext.KierowcyBd.Add(Kierowca);
+        public void DodanieKierowcy(AddTicketDto mandatDto) {
+            var Kierowca =_mapp.Map<Drivers>(mandatDto);
+            _dbContext.DriversBd.Add(Kierowca);
             _dbContext.SaveChanges();
         }
-        public void DodanieWpisuHistorii(string tekst,Kierowcy tenkierowca) {
-            Historia Hist = null;
+        public void DodanieWpisuHistorii(string tekst,Drivers tenkierowca) {
+            History Hist = null;
             if (_dbContext.HistBd.Count() > 0) Hist = _dbContext.HistBd.FirstOrDefault(a => a.PESEL == tenkierowca.Pesel);
             if (Hist == null)
             {
-                Hist = new Historia { PESEL = tenkierowca.Pesel, Imie = tenkierowca.Imie, Nazwisko = tenkierowca.Nazwisko, Opis = " " };
+                Hist = new History { PESEL = tenkierowca.Pesel, Name = tenkierowca.Name, LastName = tenkierowca.LastName, Description = " " };
                 _dbContext.HistBd.Add(Hist);
                 _dbContext.SaveChanges();
             }
 
-            var a = Hist.Opis;
+            var a = Hist.Description;
             a=a.Insert(0, tekst);
-            Hist.Opis = a;
+            Hist.Description = a;
             _dbContext.SaveChanges();
         }
 
-        public ReturnKierowcaDto InformacjeKierowcy(string PESEL) {
-            var a = _dbContext.KierowcyBd.FirstOrDefault(a => a.Pesel == PESEL);
+        public ReturnDriverDto DriverInfoF(string PESEL) {
+            var a = _dbContext.DriversBd.FirstOrDefault(a => a.Pesel == PESEL);
             if (a == null)
                 throw new NotFoundExceptions("Nie znaleziono takiego kierowcy");
-            if (a.CzyUtracil)
+            if (a.IsPermanentLost)
             {
-                var retNo = new ReturnKierowcaDto { CzyUtracil = true };
+                var retNo = new ReturnDriverDto { IsPermanentLost = true };
                 return retNo;
             }
-            return _mapp.Map<ReturnKierowcaDto>(a);
+            return _mapp.Map<ReturnDriverDto>(a);
         }
 
 
-        public void Oplacanie(string id) {
-            var Mandat = _dbContext.MandatyBd.Include(a => a.Kierowcy).Include(a=>a.Powod).FirstOrDefault(a => a.ID == int.Parse(id));
+        public void PaymentF(string id) {
+            var Mandat = _dbContext.TicketsBd.Include(a => a.Driver).Include(a=>a.Reason).FirstOrDefault(a => a.ID == int.Parse(id));
             if (Mandat != null)
             {
-                Mandat.DataOplacenia = DateTime.Today;
-                if (Mandat.Kierowcy.CzyOdebrano && !Mandat.Kierowcy.CzyUtracil)
+                Mandat.DateOfPayment = DateTime.Today;
+                if (Mandat.Driver.IsTimelyLost && !Mandat.Driver.IsPermanentLost)
                 {
-                    var Czasowo = _dbContext.CzasowoBd.FirstOrDefault(a => a.KierowcaID == Mandat.KierowcyID);
-                    if (Czasowo != null && Czasowo.DataOddania == DateTime.MinValue)
+                    var Czasowo = _dbContext.TimelyBd.FirstOrDefault(a => a.DriverID == Mandat.DriverID);
+                    if (Czasowo != null && Czasowo.DateOfGiveBack == DateTime.MinValue)
                     {
-                        Czasowo.DataOdebrania = DateTime.Today;
-                        Czasowo.DataOddania = DateTime.Today.AddMonths(Mandat.Powod.Miesi¹ceWstrzymania);
+                        Czasowo.DateOfLost = DateTime.Today;
+                        Czasowo.DateOfGiveBack = DateTime.Today.AddMonths(Mandat.Reason.MonthsOfLost);
                     }
                     else
                     {
@@ -160,14 +160,14 @@ namespace ApiP.Services {
                         throw new NotFoundExceptions("Nie znaleziono takiego mandatu");
                     }
                 }
-                if (Mandat.Kierowcy.CzyUtracil)
+                if (Mandat.Driver.IsPermanentLost)
                 {
-                    _dbContext.MandatyBd.Remove(Mandat);
-                    DodanieWpisuHistorii("Kierowca otrzyma³ mandat za: "+Mandat.Powod.Tytul+"| ", Mandat.Kierowcy);
-                    var Mandaty = _dbContext.MandatyBd.Where(a => a.KierowcyID == Mandat.KierowcyID && a.DataOplacenia >= a.DataWydania).ToList();
+                    _dbContext.TicketsBd.Remove(Mandat);
+                    DodanieWpisuHistorii("Driver otrzyma³ mandat za: "+Mandat.Reason.Title+"| ", Mandat.Driver);
+                    var Mandaty = _dbContext.TicketsBd.Where(a => a.DriverID == Mandat.DriverID && a.DateOfPayment >= a.DateOfTicket).ToList();
                     if (Mandaty.Count() == 0)
                     {
-                        _dbContext.KierowcyBd.Remove(Mandat.Kierowcy);
+                        _dbContext.DriversBd.Remove(Mandat.Driver);
                     }
                 }
                 _dbContext.SaveChanges();
@@ -175,11 +175,11 @@ namespace ApiP.Services {
                 throw new NotFoundExceptions("Nie znaleziono takiego mandatu");
         }
 
-        public ReturnMandatDto[] MandatyKierowcy(string PESEL)
+        public ReturnTicketDto[] DriverTickets(string PESEL)
         {
-            var a = _dbContext.MandatyBd.Include(a=>a.Kierowcy).Include(a=>a.Powod).Where(a => a.Kierowcy.Pesel == PESEL).ToArray();
+            var a = _dbContext.TicketsBd.Include(a=>a.Driver).Include(a=>a.Reason).Where(a => a.Driver.Pesel == PESEL).ToArray();
             if (a != null)
-                return _mapp.Map<ReturnMandatDto[]>(a);
+                return _mapp.Map<ReturnTicketDto[]>(a);
             throw new NotFoundExceptions("Nie znaleziono takiego kierowcy");
         }
 
@@ -187,12 +187,12 @@ namespace ApiP.Services {
         {
             var a = _dbContext.HistBd.FirstOrDefault(a => a.PESEL == PESEL);
             if (a != null)
-                return a.Opis;
+                return a.Description;
             return "Ten kierowca nie ma wpisów w historii";
         }
 
         public List<Taryfikator> GetTar() {
-            return _dbContext.TaryfikatorBd.OrderBy(a => a.Liczba_PKT).ToList();
+            return _dbContext.TaryfikatBd.OrderBy(a => a.PointNumber).ToList();
         }
     }
 }

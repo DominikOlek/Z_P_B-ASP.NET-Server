@@ -21,18 +21,18 @@ namespace ApiP.Controllers
             _Service = service;
         }
 
-        [HttpGet("aktualizacja")]
+        [HttpGet("actualization")]
         public ActionResult<string> Aktualizacja() {
             return Ok(_Service.GetActualization());
         }
 
-        [HttpGet("przypominanie")]
+        [HttpGet("alerts")]
         public ActionResult<string> Przypomnienie()
         {
             return Ok(_Service.SendReminder());
         }
 
-        [HttpGet("aktualizacjamandatow")]
+        [HttpGet("ticketsUpdate")]
         public ActionResult<string> Aktyalizacjamandat()
         {
             return Ok(_Service.MandatActualization());

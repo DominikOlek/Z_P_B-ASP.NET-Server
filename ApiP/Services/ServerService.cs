@@ -39,11 +39,11 @@ namespace ApiP.Services
         }
 
         public string GetActualization() {
-            var Czasowe =_dbContext.CzasowoBd.Include(a => a.Kierowca).Where(a=>a.DataOddania == DateTime.Today);
+            var Czasowe =_dbContext.TimelyBd.Include(a => a.Driver).Where(a=>a.DateOfGiveBack == DateTime.Today);
             if (Czasowe.Count() > 0) {
-                foreach (CzasowoOdebrane i in Czasowe) {
-                    i.Kierowca.CzyOdebrano = false;
-                    _dbContext.CzasowoBd.Remove(i);
+                foreach (TimelyLost i in Czasowe) {
+                    i.Driver.IsTimelyLost = false;
+                    _dbContext.TimelyBd.Remove(i);
                     //wyslanie maila i dodanie wpisu historii
                 }
                 _dbContext.SaveChanges();
@@ -54,43 +54,43 @@ namespace ApiP.Services
 
         public string SendReminder()
         {
-            var NieOplacone = _dbContext.MandatyBd.Include(a => a.Kierowcy).Where(a => a.DataOplacenia < a.DataWydania);
+            var NieOplacone = _dbContext.TicketsBd.Include(a => a.Driver).Where(a => a.DateOfPayment < a.DateOfTicket);
             if (NieOplacone.Count() > 0)
             {
-                foreach (Mandaty i in NieOplacone)
+                foreach (Tickets i in NieOplacone)
                 {
-                    var a = i.DataWydania.AddDays(7);
+                    var a = i.DateOfTicket.AddDays(7);
                     if (DateTime.Compare(a,DateTime.Today) == 1)
-                        Send(i.Kierowcy.Email, "Przypomnienie o uregulowaniu zapłaty", string.Join(' ', i.Kierowcy.Imie, i.Kierowcy.Nazwisko)+" przypominamy o uregulowaniu mandatu otrzymanego "+i.DataWydania+". W przypadku nieuregulowania do dnia "+i.DataWydania.AddDays(7)+" zapłata zostanie pobrana przez odpowiedni urządz skarbowy lub komornika.");
+                        Send(i.Driver.Email, "Przypomnienie o uregulowaniu zapłaty", string.Join(' ', i.Driver.Name, i.Driver.LastName)+" przypominamy o uregulowaniu mandatu otrzymanego "+i.DateOfTicket+". W przypadku nieuregulowania do dnia "+i.DateOfTicket.AddDays(7)+" zapłata zostanie pobrana przez odpowiedni urządz skarbowy lub komornika.");
                     else
-                        Send(i.Kierowcy.Email, "Okres uregulowania przeminął", string.Join(' ', i.Kierowcy.Imie, i.Kierowcy.Nazwisko) + " minął okres 7 dni do zapłaty otrzymanego w dniu " + i.DataWydania + " mandatu. Zapłata zostanie pobrana przez odpowiedni urządz skarbowy lub komornika.");
+                        Send(i.Driver.Email, "Okres uregulowania przeminął", string.Join(' ', i.Driver.Name, i.Driver.LastName) + " minął okres 7 dni do zapłaty otrzymanego w dniu " + i.DateOfTicket + " mandatu. Zapłata zostanie pobrana przez odpowiedni urządz skarbowy lub komornika.");
                 }
                 return DateTime.Today.Date + "-Wiadomość przypominająca została przekazana " + NieOplacone.Count() + " kierowcą";
             }
             return DateTime.Today.Date + "-Nie znaleziono kierowców z mandatami";
         }
-        public void DodanieWpisuHistorii(string tekst, Kierowcy tenkierowca)
+        public void DodanieWpisuHistorii(string tekst, Drivers tenkierowca)
         {
-            Historia Hist = null;
+            History Hist = null;
             Hist = _dbContext.HistBd.FirstOrDefault(a => a.PESEL == tenkierowca.Pesel);
             if (Hist == null)
             {
-                Hist = new Historia { PESEL = tenkierowca.Pesel, Imie = tenkierowca.Imie, Nazwisko = tenkierowca.Nazwisko, Opis = " " };
+                Hist = new History { PESEL = tenkierowca.Pesel, Name = tenkierowca.Name, LastName = tenkierowca.LastName, Description = " " };
                 _dbContext.HistBd.Add(Hist);
                 _dbContext.SaveChanges();
             }
 
-            var a = Hist.Opis;
+            var a = Hist.Description;
             a = a.Insert(0, tekst);
-            Hist.Opis = a;
+            Hist.Description = a;
             _dbContext.SaveChanges();
         }
         public string MandatActualization() {
-            var Mandaty = _dbContext.MandatyBd.Include(a=>a.Kierowcy).Include(a=>a.Powod).Where(a=>DateTime.Compare(a.DataOplacenia,DateTime.Today.AddYears(-2))==0);
-            foreach (Mandaty i in Mandaty) {
-                DodanieWpisuHistorii("Kierowca otrzymał mandat za " + i.Powod.Tytul+"| ", i.Kierowcy);
-                i.Kierowcy.Pkt -= i.Powod.Liczba_PKT;
-                _dbContext.MandatyBd.Remove(i);
+            var Mandaty = _dbContext.TicketsBd.Include(a=>a.Driver).Include(a=>a.Reason).Where(a=>DateTime.Compare(a.DateOfPayment,DateTime.Today.AddYears(-2))==0);
+            foreach (Tickets i in Mandaty) {
+                DodanieWpisuHistorii("Driver otrzymał mandat za " + i.Reason.Title+"| ", i.Driver);
+                i.Driver.Pkt -= i.Reason.PointNumber;
+                _dbContext.TicketsBd.Remove(i);
                 _dbContext.SaveChanges();
             }
             // _dbContext.SaveChanges(); jest w wpisach do historii

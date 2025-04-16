@@ -11,7 +11,7 @@ namespace ApiP.Models
 {
     public class LoginDto
     {
-        public int Nr_Sluzbowy { get; set; }
+        public int BadgeNumber { get; set; }
         [Required]
         [MinLength(4)]
         public string Password { get; set; }

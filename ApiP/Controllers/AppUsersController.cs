@@ -82,8 +82,8 @@ namespace ApiP.Controllers
                 return Ok(_ServiceUsers.GetDriverInfo(new DriverInfoLog
                 {
                     Pesel = identificator.FindFirst(ClaimTypes.PrimarySid).Value,
-                    Imie = identificator.FindFirst(ClaimTypes.Name).Value,
-                    Nazwisko = identificator.FindFirst(ClaimTypes.Surname).Value,
+                    Name = identificator.FindFirst(ClaimTypes.Name).Value,
+                    LastName = identificator.FindFirst(ClaimTypes.Surname).Value,
                 }));
             } 
             return null;

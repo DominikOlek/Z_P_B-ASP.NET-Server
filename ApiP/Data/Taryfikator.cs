@@ -11,9 +11,9 @@ namespace ApiP.Data
     public class Taryfikator
     {
         public int ID { get; set; }
-        public int Liczba_PKT { get; set; }
-        public int Miesi¹ceWstrzymania { get; set; }
-        public string Tytul { get; set; }
+        public int PointNumber { get; set; }
+        public int MonthsOfLost { get; set; }
+        public string Title { get; set; }
 
     }
 }

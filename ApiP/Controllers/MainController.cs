@@ -12,7 +12,7 @@ using ApiP.Data;
 
 namespace ApiP.Controllers
 {
-    [Route("/drogowe")]
+    [Route("/road")]
     [ApiController]
     [Authorize(Roles = "Ruch_Drogowy,Komendant")]
     public class MainController : ControllerBase
@@ -24,40 +24,40 @@ namespace ApiP.Controllers
             _Service = service;
         }
 
-        [HttpPost("dodaj")]
-        public ActionResult<string[]> GetA([FromBody] AddMandatDto mandat)
+        [HttpPost("add")]
+        public ActionResult<string[]> GetA([FromBody] AddTicketDto mandat)
         {
             var Wystawiajacy = int.Parse(User.FindFirst(a => a.Type == ClaimTypes.NameIdentifier).Value);
-            string[] ret = _Service.DodanieMandatu(mandat,Wystawiajacy); 
+            string[] ret = _Service.AddTicketF(mandat,Wystawiajacy); 
             return Ok(ret);
         }
 
-        [HttpPost("kierowca")]
-        public ActionResult<ReturnKierowcaDto> GetKierowcaInforamtion([FromBody] string PESEL)
+        [HttpPost("driver")]
+        public ActionResult<ReturnDriverDto> GetKierowcaInforamtion([FromBody] string PESEL)
         {
             if (PESEL.Length != 11)
                 return BadRequest("PESEL POWINNIEN MIEÆ 11 ZNAKÓW");
-            var ret = _Service.InformacjeKierowcy(PESEL);     
+            var ret = _Service.DriverInfoF(PESEL);     
             return Ok(ret);
         }
 
-        [HttpGet("Oplacenie/{id}")]
+        [HttpGet("payment/{id}")]
         public ActionResult<string> Oplata([FromRoute] string id)
         {
-            _Service.Oplacanie(id);
+            _Service.PaymentF(id);
             return Ok("OPLACONO");
         }
 
-        [HttpPost("MandatyKier")]
-        public ActionResult<ReturnMandatDto[]> GetKierowcaMandats([FromBody] string PESEL)
+        [HttpPost("driverTicket")]
+        public ActionResult<ReturnTicketDto[]> GetKierowcaMandats([FromBody] string PESEL)
         {
             if (PESEL.Length != 11)
                 return BadRequest("PESEL POWINNIEN MIEÆ 11 ZNAKÓW");
-            var ret = _Service.MandatyKierowcy(PESEL);
+            var ret = _Service.DriverTickets(PESEL);
             return Ok(ret);
         }
 
-        [HttpPost("HistoriaKier")]
+        [HttpPost("driverHist")]
         public ActionResult<string> GetHistory([FromBody] string PESEL)
         {
             if (PESEL.Length != 11)

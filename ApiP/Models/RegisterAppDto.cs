@@ -15,9 +15,9 @@ namespace ApiP.Models
         [StringLength(11, MinimumLength = 11)]
         public string Pesel { get; set; }
         [Required]
-        public string Imie { get; set; }
+        public string Name { get; set; }
         [Required]
-        public string Nazwisko { get; set; }
+        public string LastName { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]
@@ -28,7 +28,7 @@ namespace ApiP.Models
         [Required]
         public string Nr_tel { get; set; }
         [Required]
-        public DateTime Data_ur { get; set; }
+        public DateTime BirthDate { get; set; }
 
     }
 }

@@ -9,13 +9,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ApiP.Models
 {
-    public class ReturnMandatDto
+    public class ReturnTicketDto
     {
-        public string Tytul { get; set; }
-        public string Opis { get; set; }
-        public int PktZaMandat { get; set; }
-        public int MWstrzymania { get; set; }
-        public DateTime DataWydania { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int Pkt { get; set; }
+        public int MonthsOfLost { get; set; }
+        public DateTime DateOfTicket { get; set; }
     }
 }
 

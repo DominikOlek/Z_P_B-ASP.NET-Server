@@ -31,7 +31,7 @@ namespace ApiP.Controllers
 
         [HttpPost("login")]
         public ActionResult<string> Login([FromBody] LoginDto dto) {
-            if (dto.Nr_Sluzbowy != 0)
+            if (dto.BadgeNumber != 0)
             {
                 string token = _Service.GenerateJwt(dto);
                 return Ok(token);
@@ -40,7 +40,7 @@ namespace ApiP.Controllers
                 return NotFound("Nie podano wszystkich danych");
         }
 
-        [HttpGet("GetUserRole")]
+        [HttpGet("getUserRole")]
         [Authorize]
         public ActionResult<string> GetUserRole()
         {

@@ -12,10 +12,10 @@ namespace ApiP.Models
     public class AddTaryfikatorDto
     {
         [Required]
-        public int Liczba_PKT { get; set; }
-        public int MiesiąceWstrzymania { get; set; } = 0;
+        public int PointNumber { get; set; }
+        public int MonthsOfLost { get; set; } = 0;
         [Required]
-        public string Tytul { get; set; }
+        public string Title { get; set; }
 
     }
 }

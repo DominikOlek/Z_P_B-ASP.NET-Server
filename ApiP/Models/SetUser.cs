@@ -11,8 +11,8 @@ namespace ApiP.Models
 {
     public class SetUserDto
     {
-        public int Nr_Sluzbowy { get; set; }
-        public int Rola { get; set; } = 7;
+        public int BadgeNumber { get; set; }
+        public int Role { get; set; } = 7;
     }
 }
 

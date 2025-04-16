@@ -88,8 +88,8 @@ namespace ApiP.Services
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier,user.ID.ToString()),
-                new Claim(ClaimTypes.Name,user.Imie),
-                new Claim(ClaimTypes.Surname,user.Nazwisko),
+                new Claim(ClaimTypes.Name,user.Name),
+                new Claim(ClaimTypes.Surname,user.LastName),
                 new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.PrimarySid,user.Pesel)
             };
